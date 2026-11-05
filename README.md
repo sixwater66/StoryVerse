@@ -59,3 +59,13 @@ AI 辅助创作、AI 平行生成均为明确标注的概念演示，结果来�
 ## 基础验收
 
 `npm test` 使用 Vitest + jsdom 验证角色切换、客观卡一致、分支差异与独立保存、重新挂载恢复版本、手稿编辑、探索返回和手动进入的进度/播放状态、损坏 JSON 回退。它不代替真实浏览器中的视频解码、自动播放政策和最终 MP4 测试。
+
+## GitHub Pages 自动部署
+
+仓库 https://github.com/sixwater66/StoryVerse ，默认分支 main。
+在仓库 Settings → Pages → Build and deployment → Source 选择 **GitHub Actions**。
+每次推送 main 自动运行 `.github/workflows/deploy-pages.yml`；也可在 Actions 中选择 Deploy StoryVerse to GitHub Pages → Run workflow 手动运行。
+工作流使用内置 GITHUB_TOKEN 与 OIDC，无需设置个人密钥；构建只有 contents: read，部署任务拥有 pages: write 和 id-token: write。若组织策略禁用 Actions 或限制 github-pages 环境部署，需要管理员放行。
+预期地址为 https://sixwater66.github.io/StoryVerse/#/work ，以成功部署任务的输出网址为准。
+
+Vite base 为 /StoryVerse/，静态资源使用 BASE_URL；HashRouter 让刷新和深层页面通过 #/studio、#/explore、#/branches 访问，无需服务器回退（取代上文的生产回退要求）。本地 Vite 也使用 /StoryVerse/ 路径。localStorage 键不变，但公网与 localhost 不同源，已有本机数据不会自动迁移。未来视频配置保留 /assets/video/story.mp4，由播放器添加部署 base；临时文件的 blob URL 不受影响。
