@@ -1,0 +1,11 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import {BrowserRouter,Routes,Route,Navigate} from 'react-router-dom';
+import {Provider} from './store';
+import Layout from './components/Layout';
+import Studio from './pages/Studio';
+import Work from './pages/Work';
+import Explore from './pages/Explore';
+import Branches from './pages/Branches';
+import './styles.css';
+ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><Provider><BrowserRouter><Routes><Route element={<Layout/>}><Route index element={<Navigate to="/work" replace/>}/><Route path="studio" element={<Studio/>}/><Route path="work" element={<Work/>}/><Route path="explore" element={<Explore/>}/><Route path="branches" element={<Branches/>}/><Route path="*" element={<Navigate to="/work" replace/>}/></Route></Routes></BrowserRouter></Provider></React.StrictMode>);
