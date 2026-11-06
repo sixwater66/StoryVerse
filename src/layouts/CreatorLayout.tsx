@@ -1,0 +1,5 @@
+import {NavLink,Outlet,useLocation,Link} from 'react-router-dom';
+import {BookOpen,Feather,Film,MousePointer,CheckCircle,Library} from 'lucide-react';
+import {useStory} from '../store';
+const stages=[['/creator','C1 作品管理',Library],['/creator/story','C2 故事与结构',Feather],['/creator/media','C3 视听与分镜',Film],['/creator/interactions','C4 节点与权限',MousePointer],['/creator/review','C5 审核与发布',CheckCircle]] as const;
+export default function CreatorLayout(){const {state}=useStory();const {pathname}=useLocation();return <div className="shell creator-layout"><aside><Link className="brand" to="/creator"><BookOpen/>StoryVerse<span>创作者空间</span></Link><div className="nav-label">制作阶段</div><nav aria-label="创作者导航">{stages.map(([to,label,Icon])=><NavLink end to={to} key={to}><Icon size={17}/>{label}</NavLink>)}</nav><Link className="button full" to="/">进入观众端 ↗</Link><div className="aside-bottom">当前作品：{state.title||'未命名作品'}<p>概念演示 · 本地创作</p></div></aside><main><header><span>{stages.find(([to])=>to===pathname.replace(/\/$/,''))?.[1]||'创作空间'} / {state.title}</span><span>保存方式：浏览器本地自动保存</span></header><Outlet/></main></div>}
