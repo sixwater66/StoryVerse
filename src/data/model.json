@@ -1,0 +1,269 @@
+{
+  "schemaVersion": 1,
+  "presetVersionId": "bookshop-preset-v1",
+  "story": {
+    "id": "story-bookshop",
+    "type": "互动短篇",
+    "author": "课程原创测试作品",
+    "status": "published",
+    "stage": "prototype"
+  },
+  "relationships": [
+    {
+      "from": "lin",
+      "to": "he",
+      "description": "委托代转信件"
+    },
+    {
+      "from": "zhou",
+      "to": "lin",
+      "description": "不完整的旁观者"
+    }
+  ],
+  "rules": [
+    "客观线索供读者查看，不自动成为角色知识。",
+    "剧情结果为预制内容，不调用 AI。"
+  ],
+  "sceneId": "bookshop",
+  "interactions": [
+    {
+      "id": "explore",
+      "sceneId": "bookshop",
+      "at": 45,
+      "hotspotIds": [
+        "clock",
+        "book",
+        "box",
+        "umbrella",
+        "drawer",
+        "bookmark"
+      ],
+      "actions": [
+        "inspect",
+        "switch-perspective"
+      ],
+      "trigger": {
+        "kind": "time",
+        "value": "45"
+      },
+      "stateChanges": [
+        {
+          "key": "playing",
+          "value": "false"
+        }
+      ],
+      "branchIds": []
+    },
+    {
+      "id": "decision",
+      "sceneId": "bookshop",
+      "at": 62,
+      "hotspotIds": [],
+      "actions": [
+        "wait",
+        "question",
+        "leave"
+      ],
+      "trigger": {
+        "kind": "choice",
+        "value": "action"
+      },
+      "stateChanges": [
+        {
+          "key": "selectedBranch",
+          "value": "chosen-action"
+        }
+      ],
+      "branchIds": [
+        "wait",
+        "question",
+        "leave"
+      ]
+    }
+  ],
+  "permissions": {
+    "explorableSceneIds": [
+      "bookshop"
+    ],
+    "perspectiveIds": [
+      "lin",
+      "he",
+      "zhou"
+    ],
+    "remixNodeIds": [
+      "decision"
+    ],
+    "editableFields": [
+      "title",
+      "text"
+    ],
+    "reusableAssetIds": [
+      "character-lin",
+      "character-he",
+      "character-zhou",
+      "background-bookshop",
+      "prop-clock",
+      "prop-book",
+      "prop-box",
+      "prop-umbrella",
+      "prop-drawer",
+      "prop-bookmark"
+    ]
+  },
+  "assets": [
+    {
+      "id": "character-lin",
+      "kind": "character",
+      "name": "林砚",
+      "references": [
+        "lin"
+      ],
+      "versions": [
+        {
+          "id": "character-lin-v1",
+          "createdAt": "2026-11-05T00:00:00Z",
+          "path": "assets/characters/lin.svg"
+        }
+      ]
+    },
+    {
+      "id": "character-he",
+      "kind": "character",
+      "name": "阿禾",
+      "references": [
+        "he"
+      ],
+      "versions": [
+        {
+          "id": "character-he-v1",
+          "createdAt": "2026-11-05T00:00:00Z",
+          "path": "assets/characters/he.svg"
+        }
+      ]
+    },
+    {
+      "id": "character-zhou",
+      "kind": "character",
+      "name": "老周",
+      "references": [
+        "zhou"
+      ],
+      "versions": [
+        {
+          "id": "character-zhou-v1",
+          "createdAt": "2026-11-05T00:00:00Z",
+          "path": "assets/characters/zhou.svg"
+        }
+      ]
+    },
+    {
+      "id": "background-bookshop",
+      "kind": "background",
+      "name": "拾简旧书店",
+      "references": [
+        "bookshop"
+      ],
+      "versions": [
+        {
+          "id": "background-bookshop-v1",
+          "createdAt": "2026-11-05T00:00:00Z",
+          "path": "assets/scenes/bookshop.svg"
+        }
+      ]
+    },
+    {
+      "id": "prop-clock",
+      "kind": "prop",
+      "name": "黄铜钟",
+      "references": [
+        "clock"
+      ],
+      "versions": [
+        {
+          "id": "prop-clock-v1",
+          "createdAt": "2026-11-05T00:00:00Z",
+          "path": "assets/props/clock.svg"
+        }
+      ]
+    },
+    {
+      "id": "prop-book",
+      "kind": "prop",
+      "name": "古籍",
+      "references": [
+        "book"
+      ],
+      "versions": [
+        {
+          "id": "prop-book-v1",
+          "createdAt": "2026-11-05T00:00:00Z",
+          "path": "assets/props/book.svg"
+        }
+      ]
+    },
+    {
+      "id": "prop-box",
+      "kind": "prop",
+      "name": "收纳盒",
+      "references": [
+        "box"
+      ],
+      "versions": [
+        {
+          "id": "prop-box-v1",
+          "createdAt": "2026-11-05T00:00:00Z",
+          "path": "assets/props/box.svg"
+        }
+      ]
+    },
+    {
+      "id": "prop-umbrella",
+      "kind": "prop",
+      "name": "雨伞",
+      "references": [
+        "umbrella"
+      ],
+      "versions": [
+        {
+          "id": "prop-umbrella-v1",
+          "createdAt": "2026-11-05T00:00:00Z",
+          "path": "assets/props/umbrella.svg"
+        }
+      ]
+    },
+    {
+      "id": "prop-drawer",
+      "kind": "prop",
+      "name": "抽屉",
+      "references": [
+        "drawer"
+      ],
+      "versions": [
+        {
+          "id": "prop-drawer-v1",
+          "createdAt": "2026-11-05T00:00:00Z",
+          "path": "assets/props/drawer.svg"
+        }
+      ]
+    },
+    {
+      "id": "prop-bookmark",
+      "kind": "prop",
+      "name": "书签",
+      "references": [
+        "bookmark"
+      ],
+      "versions": [
+        {
+          "id": "prop-bookmark-v1",
+          "createdAt": "2026-11-05T00:00:00Z",
+          "path": "assets/props/bookmark.svg"
+        }
+      ]
+    }
+  ],
+  "release": {
+    "id": "bookshop-release-v1",
+    "publishedAt": "2026-11-05T00:00:00Z"
+  }
+}

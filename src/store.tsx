@@ -1,11 +1,28 @@
-import {createContext,useContext,useState,type ReactNode} from 'react';
+import {createContext,useContext,useState,useEffect,type ReactNode} from 'react';
 import {story} from './data';
+import {DB_KEY} from './services/storage';
+import {readLegacyState,saveLegacyState,published,createRemix,storageWarning,STORAGE_NOTICE} from './services/data';
+import type {LegacyState,LegacyVersion} from './services/model';
 export {story};
-export type Version={id:string;branchId:string;title:string;text:string;createdAt:string};
-export type State={title:string;text:string;world:string;time:number;playing:boolean;perspective:string;seen:string[];versions:Version[];exploration:null|{time:number;playing:boolean};nodeVisited:boolean;selectedBranch:string};
-const initial:State={title:story.title,text:story.text,world:story.world,time:0,playing:false,perspective:'lin',seen:[],versions:[],exploration:null,nodeVisited:false,selectedBranch:'wait'};
-export function readState():State {try{const s=JSON.parse(localStorage.getItem('storyverse-v1')||'null');if(!s)return initial;return {...initial,...s,time:Math.min(90,Math.max(0,Number(s.time)||0)),versions:Array.isArray(s.versions)?s.versions:[],seen:Array.isArray(s.seen)?s.seen:[]};}catch{return initial;}}
-const Context=createContext<{state:State;update:(patch:Partial<State>|((s:State)=>Partial<State>))=>void}> (null!);
-export function Provider({children}:{children:ReactNode}){const [state,set]=useState(readState);function update(patch:Partial<State>|((s:State)=>Partial<State>)){set(s=>{const next={...s,...(typeof patch==='function'?patch(s):patch)};try{localStorage.setItem('storyverse-v1',JSON.stringify(next));}catch{alert('本地存储空间不足，状态未保存。');}return next;});}return <Context.Provider value={{state,update}}>{children}</Context.Provider>;}
+export type Version=LegacyVersion;
+export type State=LegacyState;
+export const readState=readLegacyState;
+const Context=createContext<{state:State;update:(patch:Partial<State>|((s:State)=>Partial<State>))=>boolean}>(null!);
+export function Provider({children}:{children:ReactNode}){
+ const [state,set]=useState(readState);
+ useEffect(()=>{const sync=(event:StorageEvent)=>{if(event.key===DB_KEY)set(readState());};window.addEventListener('storage',sync);return ()=>window.removeEventListener('storage',sync);},[]);
+ function update(patch:Partial<State>|((s:State)=>Partial<State>)){
+  // Read the latest disk state so a progress update cannot overwrite another tab's draft.
+  try{const previous=readState();const next={...previous,...(typeof patch==='function'?patch(previous):patch)};saveLegacyState(next);set(readState());return true;}
+  catch(e){alert(e instanceof Error?e.message:'保存失败。'+STORAGE_NOTICE);return false;}
+ }
+ return <Context.Provider value={{state,update}}><p role="status" className="storage-notice">{storageWarning()||STORAGE_NOTICE}</p>{children}</Context.Provider>;
+}
 export const useStory=()=>useContext(Context);
-export function makeVersion(branchId:string,title:string):Version {const branch=story.branches.find(b=>b.id===branchId)!;return {id:crypto.randomUUID(),branchId,title:title.trim()||branch.title,text:branch.text,createdAt:new Date().toISOString()};}
+/** Viewer content always comes from the current immutable release, never the draft. */
+export function useViewerStory(){
+ const context=useStory();const snapshot=published();
+ const update:typeof context.update=patch=>context.update(previous=>{const next=typeof patch==='function'?patch({...previous,title:snapshot.title,text:snapshot.text,world:snapshot.world}):patch;if(['title','text','world'].some(key=>key in next))throw Error('观众端不能修改作者草稿。');return next;});
+ return {update,state:{...context.state,title:snapshot.title,text:snapshot.text,world:snapshot.world}};
+}
+export function makeVersion(branchId:string,title:string):Version{return createRemix(branchId,title);}
