@@ -10,7 +10,7 @@ export const readState=readLegacyState;
 const Context=createContext<{state:State;update:(patch:Partial<State>|((s:State)=>Partial<State>))=>boolean}>(null!);
 export function Provider({children}:{children:ReactNode}){
  const [state,set]=useState(readState);
- useEffect(()=>{const sync=(event:StorageEvent)=>{if(event.key===DB_KEY)set(readState());};window.addEventListener('storage',sync);return ()=>window.removeEventListener('storage',sync);},[]);
+ useEffect(()=>{const refresh=()=>set(readState());const sync=(event:StorageEvent)=>{if(event.key===DB_KEY)refresh();};window.addEventListener('storage',sync);window.addEventListener('storyverse-data',refresh);return ()=>window.removeEventListener('storage',sync);window.removeEventListener('storyverse-data',refresh);},[]);
  function update(patch:Partial<State>|((s:State)=>Partial<State>)){
   // Read the latest disk state so a progress update cannot overwrite another tab's draft.
   try{const previous=readState();const next={...previous,...(typeof patch==='function'?patch(previous):patch)};saveLegacyState(next);set(readState());return true;}

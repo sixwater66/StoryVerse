@@ -1,0 +1,1 @@
+export async function readTextFile(file:File){if(!file.name.toLowerCase().endsWith('.txt'))throw Error('目前仅支持 UTF-8 TXT；PDF、DOCX 等格式请转为 TXT 或粘贴文本。');if(file.size>2*1024*1024)throw Error('TXT 文件请控制在 2 MB 内。');try{return new TextDecoder('utf-8',{fatal:true}).decode(await file.arrayBuffer());}catch{throw Error('TXT 读取失败，请使用 UTF-8 编码或粘贴文本。');}}

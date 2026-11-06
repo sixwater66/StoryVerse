@@ -42,3 +42,11 @@ localStorage 与 IndexedDB 都受浏览器配额、隐私模式和清理策略�
 ## 验证
 
 服务测试覆盖初始化、保存再读、草稿/发布隔离、旧稿迁移、独立二创引用、越权拒绝、快照不可覆盖、未知版本/损坏数据恢复、容量错误与 IndexedDB 文件重新读取。既有 DOM 回归覆盖十页路由、原有交互及恢复。真实浏览器的配额策略、视频解码和 Pages 部署仍需独立验证；fake-indexeddb 测试不替代这些检查。
+
+## 创作者工作区扩展
+
+`Database.creator` 为兼容已有 v2 存档的可选扩展，包含 activeStoryId 与按作品 ID 索引的 projects；不存在时按已有作品初始化，只有测试原作获得示例结构，其余为空白结构。`CreatorProject.structure` 保存独立的静态人物、场景、事实、事件、节点知识、人物关系、世界书和规则，使用 Zod 校验 ID、引用及字段类型。不修改只读的预设 `world`，因此草稿编辑不会提前泄露给观众端。
+
+统一业务操作位于 `services/creator.ts`，页面不直接访问 localStorage。`hooks/useCreator.ts` 监听同页数据事件与跨标签存储事件；`?work=` 保留当前作品，稳定 ID 在复制时重新生成、重命名时保留。手稿和结构自动保存；保存失败时明确显示未保存。TXT 解码为正文后保存为文本，不保存临时 blob URL。最近编辑只根据真实草稿编辑时间排序，观看进度更新不会改写草稿时间。
+
+四种状态为 draft / producing / ready / published；本阶段从新建 draft 到完成 C2 的 producing，后续 ready 与重新发布由未来 C3–C5 业务推进，不在 C1 假装审核发布。C2 进入 C3 时校验完整性；返回修改保存时不自动重置制作阶段。
