@@ -69,3 +69,16 @@ AI 辅助创作、AI 平行生成均为明确标注的概念演示，结果来�
 预期地址为 https://sixwater66.github.io/StoryVerse/#/work ，以成功部署任务的输出网址为准。
 
 Vite base 为 /StoryVerse/，静态资源使用 BASE_URL；HashRouter 让刷新和深层页面通过 #/studio、#/explore、#/branches 访问，无需服务器回退（取代上文的生产回退要求）。本地 Vite 也使用 /StoryVerse/ 路径。localStorage 键不变，但公网与 localhost 不同源，已有本机数据不会自动迁移。未来视频配置保留 /assets/video/story.mp4，由播放器添加部署 base；临时文件的 blob URL 不受影响。
+
+## 数据模型（验收补齐）
+
+- `src/data/types.ts`：故事、世界、角色、客观事实、线索、分镜、条件台词、分支的显式 TypeScript 契约。
+- `src/data/index.ts`：统一导入 JSON，并通过 `Story` 类型赋值检查必需字段与结构；不使用强制类型断言，也不调用 AI。
+- `src/data/story.json`：补齐简介、背景、主题、完整作家叙事原文、独立线性版本、三角色完整第一人称叙事、结构化世界、六段画面与旁白、质疑分支台词条件。
+- `src/data/story.test.ts`：校验 ID 唯一、事实引用、时间连续、人物知识边界和条件台词。
+
+`facts` 是行动选择前的客观事实；`characters[].knowledge.factIds` 是角色知道的事实引用，`unknownFactIds` 明确未知项，`subjectivePerceptions` 是观察与主观认知。`known` 是人物面板用的第一人称已知信息，`narrative` 保留用户原始人物叙事；线索为读者全知资料，不赋予角色额外知识。`synopsis` 与 `theme` 为依据原文的内容归纳，不是新增情节。
+
+为保持页面兼容，原有 `text`（简写原作主线）、`world`（世界摘要）、`caption`（模拟分镜字幕）保留；`originalText` 与 `linearNarrative` 保存完整作家叙事源文，`narration` 单独保存用户原始视频旁白，允许空字符串表示无旁白。条件台词在第 5 个行动选择分镜关联，未指定原文没有给出的逐句时间。视频播放仍是已有概念模拟，不增加自动生成或语音功能。
+
+localStorage 键、已有编辑内容和已保存版本不迁移、不覆盖；旧存档中的文本仍按用户保存时的快照显示。分支新建版本使用补齐后的预制文本。基础工程、路由和部署配置保持不变。

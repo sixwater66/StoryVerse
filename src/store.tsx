@@ -1,5 +1,5 @@
 import {createContext,useContext,useState,type ReactNode} from 'react';
-import story from './data/story.json';
+import {story} from './data';
 export {story};
 export type Version={id:string;branchId:string;title:string;text:string;createdAt:string};
 export type State={title:string;text:string;world:string;time:number;playing:boolean;perspective:string;seen:string[];versions:Version[];exploration:null|{time:number;playing:boolean};nodeVisited:boolean;selectedBranch:string};
